@@ -87,13 +87,14 @@ void ilouds_export(ilouds *_p, char *_bits)
 ilouds *ilouds_import(const char *_bits)
 {
   ilouds *_p = (ilouds *)malloc(sizeof(ilouds));
-  _p->N = strlen(_bits) / 2;
+  int L = strlen(_bits);
+  _p->N = L / 2;
   _p->B = ibary_new(_p->N * 2);
 
   /* load structure */
   int i;
-  for(i=0; i<2*_p->N; i++)
-    ibary_set(_p->B, i, _bits[2*_p->N-i-1] == '0' ? 0 : 1);
+  for(i=0; i<L; i++)
+    ibary_set(_p->B, i, _bits[L-i-1] == '0' ? 0 : 1);
 
   return _p;
 }

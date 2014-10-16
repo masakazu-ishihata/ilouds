@@ -5,9 +5,8 @@
 
 int main(void)
 {
-  int i;
-
   /* 1 -> 2 -> 3,4 */
+  int i;
   ui **A;
   A = (ui **)calloc(N, sizeof(ui *));
   for(i=0; i<N; i++) A[i] = (ui *)calloc(M, sizeof(ui));
