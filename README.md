@@ -8,12 +8,9 @@ ROUDS の解説について [ここ][aspe] が非常にわかりやすくおす�
 [ibary]: https://github.com/masakazu-ishihata/ibary "masakazu-ishihata/ibary"
 [aspe]: http://d.hatena.ne.jp/takeda25/20120421/1335019644 "簡潔データ構造 LOUDS の解説（全12回、練習問題付き） - アスペ日記"
 
-
-
-
 ## 使い方
 
-### new / free / show
+### new / free
 
     ilouds *ilouds_new(ui _N, ui _M, ui **_A);
 
@@ -25,9 +22,20 @@ _A は幅優先順序で与えれた節点の子リストとする。
 
 LOUDS _p を free する。
 
+
+### import / export
+
     void ilouds_show(FILE *_fp, ilouds *_p);
 
 LOUDS _p を _fp に出力する。
+
+    ilouds *ilouds_export(ilouds *_p, char *_bits);
+
+LOUDS _p をビット列 _bits に変換する。
+
+    ilouds *ilouds_import(const char *_bits);
+
+ビット列 _bits が表す LOUDS を構成する。
 
 
 ### accessors
@@ -55,8 +63,3 @@ LOUDS _p を _fp に出力する。
     int ilouds_get_num_children(ilouds *_p, ui _i);
 
 節点 _i の子の数を返す。
-
-    void ilouds_set_label(ilouds *_p, ui _i, ui _l);
-
-節点 _i のラベルを _l にする。  
-(デフォルトはすべて 0 である。)

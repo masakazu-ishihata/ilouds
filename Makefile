@@ -1,7 +1,7 @@
 # Makefile
 TAR = test
 CC = gcc -O6 -Wall
-L = -lm -libary
+L = -lm -libary -licsv
 OBJS = main.o ilouds.o
 SHAD = -fPIC -shared
 LIB = libilouds.so

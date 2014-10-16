@@ -1,7 +1,9 @@
 #include "ilouds.h"
 
+#define BSIZE 256
+
 /*----------------------------------------------------------------------------*/
-/* new / free / show */
+/* new / free */
 /*----------------------------------------------------------------------------*/
 /*------------------------------------*/
 /* new */
@@ -17,7 +19,6 @@ ilouds *ilouds_new(ui _N, ui _M, ui **_A)
   /* 2N bits are required to represent a tree with N nodes */
   _p->N = _N;
   _p->B = ibary_new(2 * _N);
-  _p->L = (ui *)calloc(_N, sizeof(ui));
 
   /* add root node */
   k = 0;
@@ -46,10 +47,13 @@ void ilouds_free(void *_p)
 
   if(_c != NULL){
     ibary_free(_c->B);
-    free(_c->L);
     free(_c);
   }
 }
+
+/*----------------------------------------------------------------------------*/
+/* import / export */
+/*----------------------------------------------------------------------------*/
 /*------------------------------------*/
 /* show */
 /*------------------------------------*/
@@ -61,16 +65,39 @@ void ilouds_show(FILE *_fp, ilouds *_p)
   ibary_show(_fp, _p->B);
 
   /* tree structture */
-  fprintf(_fp, "ID        |Label     |Parent    |Children\n");
+  fprintf(_fp, "ID        |Parent    |Children\n");
   for(i=0; i<_p->N; i++){
     fprintf(_fp, "%10d|", i);
-    fprintf(_fp, "%10d|", _p->L[i]);
     fprintf(_fp, "%10d|", ilouds_get_parent(_p, i));
     for(j=0; j<ilouds_get_num_children(_p, i); j++)
       fprintf(_fp, "%10d", ilouds_get_child(_p, i, j));
     fprintf(_fp, "\n");
   }
 }
+/*------------------------------------*/
+/* export */
+/*------------------------------------*/
+void ilouds_export(ilouds *_p, char *_bits)
+{
+  ibary_string(_p->B, _bits);
+}
+/*------------------------------------*/
+/* import */
+/*------------------------------------*/
+ilouds *ilouds_import(const char *_bits)
+{
+  ilouds *_p = (ilouds *)malloc(sizeof(ilouds));
+  _p->N = strlen(_bits) / 2;
+  _p->B = ibary_new(_p->N * 2);
+
+  /* load structure */
+  int i;
+  for(i=0; i<2*_p->N; i++)
+    ibary_set(_p->B, i, _bits[2*_p->N-i-1] == '0' ? 0 : 1);
+
+  return _p;
+}
+
 
 /*----------------------------------------------------------------------------*/
 /* accessors */
@@ -127,11 +154,4 @@ int ilouds_get_child(ilouds *_p, ui _i, ui _j)
 int ilouds_get_num_children(ilouds *_p, ui _i)
 {
   return ilouds_get_head(_p, _i+1) - ilouds_get_head(_p, _i) - 1;
-}
-/*------------------------------------*/
-/* set label */
-/*------------------------------------*/
-void ilouds_set_label(ilouds *_p, ui _i, ui _l)
-{
-  _p->L[_i] = _l;
 }
