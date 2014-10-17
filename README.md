@@ -10,9 +10,9 @@ ROUDS の解説について [ここ][aspe] が非常にわかりやすくおす�
 
 ## 使い方
 
-### new / free
+### new / free / show
 
-    ilouds *ilouds_new(ui _N, ui _M, ui **_A);
+    ilouds *ilouds_new_matrix(ui _N, ui _M, ui **_A);
 
 _N x _M 行列 _A で表現された木を表現する LOUDS を構成する。  
 _N は木の節点数、_M は木の幅である。  
@@ -22,21 +22,31 @@ _A は幅優先順序で与えれた節点の子リストとする。
 
 LOUDS _p を free する。
 
-
 ### import / export
 
     void ilouds_show(FILE *_fp, ilouds *_p);
 
 LOUDS _p を _fp に出力する。
 
-    ilouds *ilouds_export(ilouds *_p, char *_bits);
+    void ilouds_export(FILE *_fp, ilouds *_p);
 
-LOUDS _p をビット列 _bits に変換する。
+LOUDS _p を _p へ書き出す。
 
-    ilouds *ilouds_import(const char *_bits);
+    ilouds *ilouds_import(char const *_file);
 
-ビット列 _bits が表す LOUDS を構成する。
+ファイル _file から LOUDS を読み込む。
 
+### convertors
+
+    char *ilouds_to_bits(ilouds *_p);
+
+LOUDS _p をビット列(文字列)に変換する。  
+要 free。
+
+    ilouds *ilouds_from_bits(const char *_bits);
+
+ビット列 _bits を LOUDS に変換する。  
+要 free。
 
 ### accessors
 
@@ -63,3 +73,7 @@ LOUDS _p をビット列 _bits に変換する。
     int ilouds_get_num_children(ilouds *_p, ui _i);
 
 節点 _i の子の数を返す。
+
+    int ilouds_get_size(ilouds *_p);
+
+LOUDS _p 中の節点数を返す。
