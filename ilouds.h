@@ -23,13 +23,17 @@ typedef struct ILOUDS
   ibary *B; /* tree */
 } ilouds;
 /* new / free */
-ilouds *ilouds_new(ui _N, ui _M, ui **_A);
+ilouds *ilouds_new_matrix(ui _N, ui _M, ui **_A);
 void ilouds_free(void *_p);
 
 /* import / export */
 void ilouds_show(FILE *_fp, ilouds *_p);
-void ilouds_export(ilouds *_p, char *_bits);
-ilouds *ilouds_import(const char *_bits);
+void ilouds_export(FILE *_fp, ilouds *_p);
+ilouds *ilouds_import(char const *_file);
+
+/* converters */
+char *ilouds_to_bits(ilouds *_p);
+ilouds *ilouds_from_bits(const char *_bits);
 
 /* accessors */
 int ilouds_get_index(ilouds *_p, ui _i);
@@ -37,5 +41,6 @@ int ilouds_get_head(ilouds *_p, ui _i);
 int ilouds_get_parent(ilouds *_p, ui _i);
 int ilouds_get_child(ilouds *_p, ui _i, ui _j);
 int ilouds_get_num_children(ilouds *_p, ui _i);
+int ilouds_get_size(ilouds *_p);
 
 #endif

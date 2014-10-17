@@ -16,9 +16,9 @@ ilouds *ilouds_new(ui _N, ui _M, ui **_A)
   int i, j, k;
   ilouds *_p = (ilouds *)malloc(sizeof(ilouds));
 
-  /* 2N bits are required to represent a tree with N nodes */
+  /* 2N+1 bits are required to represent a tree with N nodes */
   _p->N = _N;
-  _p->B = ibary_new(2 * _N);
+  _p->B = ibary_new(2 * _N + 1);
 
   /* add root node */
   k = 0;
@@ -61,9 +61,6 @@ void ilouds_show(FILE *_fp, ilouds *_p)
 {
   int i, j;
 
-  /* bit array */
-  ibary_show(_fp, _p->B);
-
   /* tree structture */
   fprintf(_fp, "ID        |Parent    |Children\n");
   for(i=0; i<_p->N; i++){
@@ -77,19 +74,68 @@ void ilouds_show(FILE *_fp, ilouds *_p)
 /*------------------------------------*/
 /* export */
 /*------------------------------------*/
-void ilouds_export(ilouds *_p, char *_bits)
+void ilouds_export(FILE *_fp, ilouds *_p)
 {
-  ibary_string(_p->B, _bits);
+  char *bits = ilouds_to_bits(_p);
+  fprintf(_fp, "%s", bits);
+  free(bits);
 }
 /*------------------------------------*/
 /* import */
 /*------------------------------------*/
-ilouds *ilouds_import(const char *_bits)
+ilouds *ilouds_import(char const *_file)
+{
+  FILE *fp = fopen(_file, "r");
+
+  /* get file size */
+  int L = 0;
+  char buf[BSIZE];
+  while(fgets(buf, BSIZE, fp) != NULL)
+    L += strlen(buf);
+
+  /* load bits */
+  char *bits = (char *)calloc(L + 2, sizeof(char));
+  strcpy(bits, "");
+  rewind(fp);
+  while(fgets(buf, BSIZE, fp) != NULL)
+    strcat(bits, buf);
+
+  /* remove \n */
+  char *p = strchr(bits, '\n');
+  if(p != NULL) *p = '\0';
+
+  /* construct LOUDS */
+  ilouds *_p = ilouds_from_bits(bits);
+
+  /* free */
+  free(bits);
+  fclose(fp);
+
+  return _p;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* converters */
+/*----------------------------------------------------------------------------*/
+/*------------------------------------*/
+/* LOUDS -> Bits */
+/*------------------------------------*/
+char *ilouds_to_bits(ilouds *_p)
+{
+  char *_bits = (char *)calloc(2*_p->N+3, sizeof(char));
+  ibary_string(_p->B, _bits);
+  return _bits;
+}
+/*------------------------------------*/
+/* Bits -> LOUDS */
+/*------------------------------------*/
+ilouds *ilouds_from_bits(const char *_bits)
 {
   ilouds *_p = (ilouds *)malloc(sizeof(ilouds));
   int L = strlen(_bits);
-  _p->N = L / 2;
-  _p->B = ibary_new(_p->N * 2);
+  _p->B = ibary_new(L);
+  _p->N = (L-1) / 2;
 
   /* load structure */
   int i;
@@ -155,4 +201,11 @@ int ilouds_get_child(ilouds *_p, ui _i, ui _j)
 int ilouds_get_num_children(ilouds *_p, ui _i)
 {
   return ilouds_get_head(_p, _i+1) - ilouds_get_head(_p, _i) - 1;
+}
+/*------------------------------------*/
+/* # of nodes */
+/*------------------------------------*/
+int ilouds_get_size(ilouds *_p)
+{
+  return _p->N;
 }
