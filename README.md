@@ -10,7 +10,7 @@ ROUDS の解説について [ここ][aspe] が非常にわかりやすくおす�
 
 ## 使い方
 
-### new / free / show
+### new / free
 
     ilouds *ilouds_new_matrix(ui _N, ui _M, ui **_A);
 

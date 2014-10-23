@@ -155,14 +155,14 @@ ilouds *ilouds_from_bits(const char *_bits)
 /*------------------------------------*/
 int ilouds_get_index(ilouds *_p, ui _i)
 {
-  return ibary_select(_p->B, 1, _i+1);
+  return ibary_select(_p->B, 1, _i);
 }
 /*------------------------------------*/
 /* head of _i = index of the first child of _i */
 /*------------------------------------*/
 int ilouds_get_head(ilouds *_p, ui _i)
 {
-  return ibary_select(_p->B, 0, _i+1) + 1;
+  return ibary_select(_p->B, 0, _i) + 1;
 }
 /*------------------------------------*/
 /* ID of _i-th node's parent */
@@ -172,10 +172,10 @@ int ilouds_get_parent(ilouds *_p, ui _i)
   /* skip if no such node */
   if(_i >= ibary_rank(_p->B, 1, 2*_p->N)) return -1;
 
-  /* id of "1" representing _i-th node in B */
-  int n = ibary_select(_p->B, 1, _i+1);
+  /* id of (_i+i)-th "1" in B */
+  int n = ibary_select(_p->B, 1, _i);
 
-  /* count # 0's before n in B */
+  /* count # 0's before n in B[0, n) */
   int m = ibary_rank(_p->B, 0, n);
 
   return m-1;
